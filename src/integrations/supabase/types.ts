@@ -14,7 +14,137 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      medicines: {
+        Row: {
+          composition: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          type: Database["public"]["Enums"]["medicine_type"]
+          updated_at: string
+        }
+        Insert: {
+          composition?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          type?: Database["public"]["Enums"]["medicine_type"]
+          updated_at?: string
+        }
+        Update: {
+          composition?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          type?: Database["public"]["Enums"]["medicine_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      prescription_medicines: {
+        Row: {
+          composition: string | null
+          created_at: string
+          dosage_afternoon: number
+          dosage_morning: number
+          dosage_night: number
+          id: string
+          medicine_name: string
+          medicine_type: Database["public"]["Enums"]["medicine_type"]
+          prescription_id: string
+          quantity: number | null
+          timing_freq_duration: string | null
+        }
+        Insert: {
+          composition?: string | null
+          created_at?: string
+          dosage_afternoon?: number
+          dosage_morning?: number
+          dosage_night?: number
+          id?: string
+          medicine_name: string
+          medicine_type?: Database["public"]["Enums"]["medicine_type"]
+          prescription_id: string
+          quantity?: number | null
+          timing_freq_duration?: string | null
+        }
+        Update: {
+          composition?: string | null
+          created_at?: string
+          dosage_afternoon?: number
+          dosage_morning?: number
+          dosage_night?: number
+          id?: string
+          medicine_name?: string
+          medicine_type?: Database["public"]["Enums"]["medicine_type"]
+          prescription_id?: string
+          quantity?: number | null
+          timing_freq_duration?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescription_medicines_prescription_id_fkey"
+            columns: ["prescription_id"]
+            isOneToOne: false
+            referencedRelation: "prescriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prescriptions: {
+        Row: {
+          bp: string | null
+          created_at: string
+          date_time: string
+          diagnosis: string | null
+          id: string
+          next_appointment: string | null
+          patient_age: number | null
+          patient_gender: string | null
+          patient_name: string
+          patient_phone: string | null
+          prescribed_tests: string | null
+          pulse: string | null
+          spo2: string | null
+          updated_at: string
+        }
+        Insert: {
+          bp?: string | null
+          created_at?: string
+          date_time?: string
+          diagnosis?: string | null
+          id?: string
+          next_appointment?: string | null
+          patient_age?: number | null
+          patient_gender?: string | null
+          patient_name: string
+          patient_phone?: string | null
+          prescribed_tests?: string | null
+          pulse?: string | null
+          spo2?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bp?: string | null
+          created_at?: string
+          date_time?: string
+          diagnosis?: string | null
+          id?: string
+          next_appointment?: string | null
+          patient_age?: number | null
+          patient_gender?: string | null
+          patient_name?: string
+          patient_phone?: string | null
+          prescribed_tests?: string | null
+          pulse?: string | null
+          spo2?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +153,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      medicine_type: "TAB" | "CAP" | "SYR" | "INJ" | "OINT" | "DROP" | "OTHER"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +280,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      medicine_type: ["TAB", "CAP", "SYR", "INJ", "OINT", "DROP", "OTHER"],
+    },
   },
 } as const
