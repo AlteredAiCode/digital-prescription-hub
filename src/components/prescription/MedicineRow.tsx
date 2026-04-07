@@ -28,7 +28,7 @@ const MEDICINE_TYPES = ["TAB", "CAP", "SYR", "INJ", "OINT", "DROP", "OTHER"];
 const MedicineRow = ({ index, medicine, onChange, onRemove }: MedicineRowProps) => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const suggestionRef = useRef<HTMLDivElement>(null);
+  const suggestionRef = useRef<HTMLTableCellElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
