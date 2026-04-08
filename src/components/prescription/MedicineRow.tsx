@@ -21,19 +21,50 @@ interface MedicineRowProps {
   medicine: MedicineEntry;
   onChange: (id: string, field: keyof MedicineEntry, value: string | number) => void;
   onRemove: (id: string) => void;
+  language: "en" | "hi";
 }
 
 const MEDICINE_TYPES = ["TAB", "CAP", "SYR", "INJ", "OINT", "DROP", "OTHER"];
 
-const MedicineRow = ({ index, medicine, onChange, onRemove }: MedicineRowProps) => {
+const TIMING_PRESETS = {
+  en: [
+    "Before food - Daily - 30 days",
+    "After food - Daily - 30 days",
+    "Before food - Daily - 60 days",
+    "After food - Daily - 60 days",
+    "Before food - Twice daily - 30 days",
+    "After food - Twice daily - 30 days",
+    "Empty stomach - Daily - 30 days",
+    "At bedtime - Daily - 30 days",
+    "SOS (as needed)",
+  ],
+  hi: [
+    "खाने से पहले - रोज़ - 30 दिन",
+    "खाने के बाद - रोज़ - 30 दिन",
+    "खाने से पहले - रोज़ - 60 दिन",
+    "खाने के बाद - रोज़ - 60 दिन",
+    "खाने से पहले - दिन में दो बार - 30 दिन",
+    "खाने के बाद - दिन में दो बार - 30 दिन",
+    "खाली पेट - रोज़ - 30 दिन",
+    "सोने से पहले - रोज़ - 30 दिन",
+    "ज़रूरत पड़ने पर (SOS)",
+  ],
+};
+
+const MedicineRow = ({ index, medicine, onChange, onRemove, language }: MedicineRowProps) => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showTimingPresets, setShowTimingPresets] = useState(false);
   const suggestionRef = useRef<HTMLTableCellElement>(null);
+  const timingRef = useRef<HTMLTableCellElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (suggestionRef.current && !suggestionRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
+      }
+      if (timingRef.current && !timingRef.current.contains(e.target as Node)) {
+        setShowTimingPresets(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -66,6 +97,8 @@ const MedicineRow = ({ index, medicine, onChange, onRemove }: MedicineRowProps) 
     onChange(medicine.id, "composition", med.composition || "");
     setShowSuggestions(false);
   };
+
+  const presets = TIMING_PRESETS[language];
 
   return (
     <tr className="border-b border-border hover:bg-accent/30 transition-colors group">
@@ -145,13 +178,31 @@ const MedicineRow = ({ index, medicine, onChange, onRemove }: MedicineRowProps) 
           />
         </div>
       </td>
-      <td className="p-2">
+      <td className="p-2 relative" ref={timingRef}>
         <Input
           value={medicine.timingFreqDuration}
           onChange={(e) => onChange(medicine.id, "timingFreqDuration", e.target.value)}
-          placeholder="खाने से पहले - रोज़ - 60 दिन"
+          onFocus={() => setShowTimingPresets(true)}
+          placeholder={language === "hi" ? "खाने से पहले - रोज़ - 60 दिन" : "Before food - Daily - 60 days"}
           className="h-7 text-xs"
         />
+        {showTimingPresets && (
+          <div className="absolute z-50 top-full left-0 w-full bg-card border border-border rounded-md shadow-lg mt-1 max-h-48 overflow-auto">
+            {presets.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => {
+                  onChange(medicine.id, "timingFreqDuration", preset);
+                  setShowTimingPresets(false);
+                }}
+                className="w-full text-left px-3 py-2 hover:bg-accent text-xs border-b border-border last:border-0"
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
+        )}
       </td>
       <td className="p-2">
         <Input
