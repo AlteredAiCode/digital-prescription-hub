@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Save, FileText } from "lucide-react";
+import SharePrescriptionDialog from "@/components/prescription/SharePrescriptionDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import PrescriptionHeader from "@/components/prescription/PrescriptionHeader";
@@ -231,10 +232,25 @@ const Index = () => {
               <Save className="h-4 w-4 mr-2" />
               {saving ? "Saving..." : "Save Prescription"}
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => window.print()}>
               <FileText className="h-4 w-4 mr-2" />
               Print
             </Button>
+            <SharePrescriptionDialog
+              prescriptionData={{
+                patientName,
+                patientAge,
+                patientGender,
+                patientPhone,
+                bp,
+                pulse,
+                spo2,
+                diagnosis,
+                prescribedTests,
+                nextAppointment,
+                medicines,
+              }}
+            />
           </div>
         </div>
       </div>
