@@ -33,6 +33,7 @@ const Index = () => {
   const [nextAppointment, setNextAppointment] = useState("");
   const [medicines, setMedicines] = useState<MedicineEntry[]>([createEmptyMedicine()]);
   const [saving, setSaving] = useState(false);
+  const [language, setLanguage] = useState<"en" | "hi">("hi");
 
   const addMedicine = () => setMedicines((prev) => [...prev, createEmptyMedicine()]);
 
@@ -157,10 +158,21 @@ const Index = () => {
             diagnosis={diagnosis} setDiagnosis={setDiagnosis}
           />
 
-          {/* Rx Symbol */}
-          <div className="text-2xl font-heading font-bold text-primary mb-2">℞</div>
-
-          {/* Medicine Table */}
+          {/* Language Toggle & Medicine Table */}
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-semibold text-foreground">Medicines</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Language:</span>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as "en" | "hi")}
+                className="h-7 rounded border border-input bg-background px-2 text-xs focus:ring-1 focus:ring-ring"
+              >
+                <option value="en">English</option>
+                <option value="hi">हिंदी</option>
+              </select>
+            </div>
+          </div>
           <div className="overflow-x-auto rounded-md border border-border">
             <table className="w-full text-sm">
               <thead>
@@ -185,6 +197,7 @@ const Index = () => {
                     medicine={med}
                     onChange={updateMedicine}
                     onRemove={removeMedicine}
+                    language={language}
                   />
                 ))}
               </tbody>
