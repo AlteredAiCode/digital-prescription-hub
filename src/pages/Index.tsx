@@ -26,9 +26,6 @@ const Index = () => {
   const [patientAge, setPatientAge] = useState("");
   const [patientGender, setPatientGender] = useState("");
   const [patientPhone, setPatientPhone] = useState("");
-  const [chiefComplaints, setChiefComplaints] = useState("");
-  const [examination, setExamination] = useState("");
-  const [allergies, setAllergies] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
   const [prescribedTests, setPrescribedTests] = useState("");
   const [nextAppointment, setNextAppointment] = useState("");
@@ -70,9 +67,6 @@ const Index = () => {
           patient_age: patientAge ? parseInt(patientAge) : null,
           patient_gender: patientGender || null,
           patient_phone: patientPhone || null,
-          chief_complaints: chiefComplaints || null,
-          examination: examination || null,
-          allergies: allergies || null,
           diagnosis: diagnosis || null,
           prescribed_tests: prescribedTests || null,
           next_appointment: nextAppointment || null,
@@ -128,9 +122,6 @@ const Index = () => {
       setPatientAge("");
       setPatientGender("");
       setPatientPhone("");
-      setChiefComplaints("");
-      setExamination("");
-      setAllergies("");
       setDiagnosis("");
       setPrescribedTests("");
       setNextAppointment("");
@@ -153,9 +144,6 @@ const Index = () => {
             patientAge={patientAge} setPatientAge={setPatientAge}
             patientGender={patientGender} setPatientGender={setPatientGender}
             patientPhone={patientPhone} setPatientPhone={setPatientPhone}
-            chiefComplaints={chiefComplaints} setChiefComplaints={setChiefComplaints}
-            examination={examination} setExamination={setExamination}
-            allergies={allergies} setAllergies={setAllergies}
             diagnosis={diagnosis} setDiagnosis={setDiagnosis}
           />
 
@@ -242,9 +230,6 @@ const Index = () => {
                 patientAge,
                 patientGender,
                 patientPhone,
-                chiefComplaints,
-                examination,
-                allergies,
                 diagnosis,
                 prescribedTests,
                 nextAppointment,

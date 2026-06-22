@@ -16,9 +16,6 @@ interface PrescriptionData {
   patientAge: string;
   patientGender: string;
   patientPhone: string;
-  chiefComplaints: string;
-  examination: string;
-  allergies: string;
   diagnosis: string;
   prescribedTests: string;
   nextAppointment: string;
@@ -75,31 +72,6 @@ export function generatePrescriptionPdf(data: PrescriptionData): jsPDF {
     y += 5;
   }
 
-  if (data.chiefComplaints) {
-    doc.setFont("helvetica", "bold");
-    doc.text("Complaints: ", margin, y);
-    doc.setFont("helvetica", "normal");
-    const cX = margin + doc.getTextWidth("Complaints: ");
-    const lines = doc.splitTextToSize(data.chiefComplaints, pageWidth - margin * 2 - 30);
-    doc.text(lines, cX, y);
-    y += 5 + (lines.length - 1) * 4;
-  }
-  if (data.examination) {
-    doc.setFont("helvetica", "bold");
-    doc.text("Examination: ", margin, y);
-    doc.setFont("helvetica", "normal");
-    const eX = margin + doc.getTextWidth("Examination: ");
-    const lines = doc.splitTextToSize(data.examination, pageWidth - margin * 2 - 30);
-    doc.text(lines, eX, y);
-    y += 5 + (lines.length - 1) * 4;
-  }
-  if (data.allergies) {
-    doc.setFont("helvetica", "bold");
-    doc.text("Allergies: ", margin, y);
-    doc.setFont("helvetica", "normal");
-    doc.text(data.allergies, margin + doc.getTextWidth("Allergies: "), y);
-    y += 5;
-  }
 
   if (data.diagnosis) {
     doc.setFont("helvetica", "bold");
