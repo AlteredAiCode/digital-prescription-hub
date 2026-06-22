@@ -1,3 +1,4 @@
+import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -11,15 +12,15 @@ interface PrescriptionFooterProps {
 const PrescriptionFooter = (props: PrescriptionFooterProps) => {
   return (
     <div className="space-y-3 mt-4 pt-4 border-t border-border">
-      <div>
+      <div className="w-full">
         <Label className="text-xs text-muted-foreground font-semibold">
           निर्धारित परीक्षण (Prescribed Tests)
         </Label>
-        <Input
+        <Textarea
           value={props.prescribedTests}
           onChange={(e) => props.setPrescribedTests(e.target.value)}
-          placeholder="CBC, ECG, KFT, HBA1C, URINE R/M, CHEST X RAY PA, RBS, THYROID PROFILE"
-          className="h-8 text-sm mt-1"
+          placeholder="Type freely — e.g. CBC, ECG, KFT, HBA1C, URINE R/M, CHEST X RAY PA, RBS, THYROID PROFILE"
+          className="text-sm mt-1 min-h-[72px] w-full resize-y"
         />
       </div>
       <div className="flex items-center gap-3">
