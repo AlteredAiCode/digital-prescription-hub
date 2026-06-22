@@ -122,9 +122,6 @@ const Index = () => {
       setPatientAge("");
       setPatientGender("");
       setPatientPhone("");
-      setChiefComplaints("");
-      setExamination("");
-      setAllergies("");
       setDiagnosis("");
       setPrescribedTests("");
       setNextAppointment("");
