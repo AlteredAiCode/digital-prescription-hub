@@ -282,29 +282,54 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
       <td className="p-2 align-top">
         <div className="relative" ref={timingWrapRef}>
           <Input
+            ref={timingInputRef}
             value={medicine.timingFreqDuration}
-            onChange={(e) => onChange(medicine.id, "timingFreqDuration", e.target.value)}
-            onFocus={() => setShowTimingPresets(true)}
+            onChange={(e) => {
+              onChange(medicine.id, "timingFreqDuration", e.target.value);
+              openTimingPresets();
+            }}
+            onFocus={openTimingPresets}
+            onKeyDown={(e) => {
+              if (e.key === "Tab" || e.key === "Escape") setShowTimingPresets(false);
+            }}
             placeholder={language === "hi" ? "खाने से पहले - रोज़ - 60 दिन" : "Before food - Daily - 60 days"}
             className="h-8 text-xs"
             autoComplete="off"
           />
-          {showTimingPresets && (
-            <div className="absolute z-50 top-full left-0 right-0 bg-popover border border-border rounded-md shadow-lg mt-1 max-h-56 overflow-auto">
-              {presets.map((preset) => (
-                <button
-                  key={preset}
-                  type="button"
-                  onClick={() => {
-                    onChange(medicine.id, "timingFreqDuration", preset);
-                    setShowTimingPresets(false);
-                  }}
-                  className="w-full text-left px-3 py-2 hover:bg-accent text-xs border-b border-border last:border-0"
-                >
-                  {preset}
-                </button>
-              ))}
-            </div>
+          {showTimingPresets && createPortal(
+            <div
+              className="fixed z-[9999] bg-popover border border-border rounded-md shadow-lg max-h-56 overflow-auto"
+              style={{ left: timingRect.left, top: timingRect.top, width: timingRect.width }}
+            >
+              {(() => {
+                const q = medicine.timingFreqDuration.trim().toLowerCase();
+                const list = q.length === 0
+                  ? presets
+                  : presets.filter((p) => p.toLowerCase().includes(q));
+                return list.length > 0 ? (
+                  list.map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onClick={() => {
+                        onChange(medicine.id, "timingFreqDuration", preset);
+                        setShowTimingPresets(false);
+                      }}
+                      className="w-full text-left px-3 py-2 hover:bg-accent text-xs border-b border-border last:border-0"
+                    >
+                      {preset}
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-3 py-2 text-xs text-muted-foreground">Keep typing — free text allowed</div>
+                );
+              })()}
+            </div>,
+            document.body
           )}
         </div>
       </td>
