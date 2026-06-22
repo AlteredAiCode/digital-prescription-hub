@@ -153,9 +153,9 @@ const Index = () => {
             patientAge={patientAge} setPatientAge={setPatientAge}
             patientGender={patientGender} setPatientGender={setPatientGender}
             patientPhone={patientPhone} setPatientPhone={setPatientPhone}
-            bp={bp} setBp={setBp}
-            pulse={pulse} setPulse={setPulse}
-            spo2={spo2} setSpo2={setSpo2}
+            chiefComplaints={chiefComplaints} setChiefComplaints={setChiefComplaints}
+            examination={examination} setExamination={setExamination}
+            allergies={allergies} setAllergies={setAllergies}
             diagnosis={diagnosis} setDiagnosis={setDiagnosis}
           />
 
