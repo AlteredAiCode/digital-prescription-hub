@@ -105,9 +105,20 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
     setSuggestionRect({ left: rect.left, top: rect.bottom + 4, width: rect.width });
   };
 
+  const updateTimingPosition = () => {
+    const rect = timingWrapRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setTimingRect({ left: rect.left, top: rect.bottom + 4, width: Math.max(rect.width, 260) });
+  };
+
   const openSuggestions = () => {
     updateSuggestionPosition();
     setShowSuggestions(true);
+  };
+
+  const openTimingPresets = () => {
+    updateTimingPosition();
+    setShowTimingPresets(true);
   };
 
   useEffect(() => {
@@ -120,6 +131,17 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
       window.removeEventListener("scroll", updateSuggestionPosition, true);
     };
   }, [showSuggestions, medicine.name]);
+
+  useEffect(() => {
+    if (!showTimingPresets) return;
+    updateTimingPosition();
+    window.addEventListener("resize", updateTimingPosition);
+    window.addEventListener("scroll", updateTimingPosition, true);
+    return () => {
+      window.removeEventListener("resize", updateTimingPosition);
+      window.removeEventListener("scroll", updateTimingPosition, true);
+    };
+  }, [showTimingPresets, medicine.timingFreqDuration]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
