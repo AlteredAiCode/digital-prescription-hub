@@ -172,9 +172,9 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
               value={medicine.name}
               onChange={(e) => {
                 onChange(medicine.id, "name", e.target.value);
-                setShowSuggestions(true);
+                openSuggestions();
               }}
-              onFocus={() => setShowSuggestions(true)}
+              onFocus={openSuggestions}
               placeholder="Select or type medicine…"
               className="h-8 text-xs font-medium pr-7 w-full"
               autoComplete="off"
@@ -183,29 +183,42 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
               type="button"
               onMouseDown={(e) => {
                 e.preventDefault();
-                setShowSuggestions((s) => !s);
+                if (showSuggestions) {
+                  setShowSuggestions(false);
+                } else {
+                  openSuggestions();
+                }
               }}
               className="absolute right-1 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
               tabIndex={-1}
             >
               <ChevronDown className="h-3.5 w-3.5" />
             </button>
-            {showSuggestions && filtered.length > 0 && (
-              <div className="absolute z-50 top-full left-0 right-0 bg-popover border border-border rounded-md shadow-lg mt-1 max-h-56 overflow-auto">
-                {filtered.map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => selectMedicine(s)}
-                    className="w-full text-left px-3 py-2 hover:bg-accent text-xs border-b border-border last:border-0"
-                  >
-                    <span className="font-medium">{s.type}. {s.name}</span>
-                    {s.composition && (
-                      <span className="block text-muted-foreground text-[10px]">{s.composition}</span>
-                    )}
-                  </button>
-                ))}
-              </div>
+            {showSuggestions && createPortal(
+              <div
+                className="fixed z-[9999] bg-popover border border-border rounded-md shadow-lg max-h-56 overflow-auto"
+                style={{ left: suggestionRect.left, top: suggestionRect.top, width: suggestionRect.width }}
+              >
+                {filtered.length > 0 ? (
+                  filtered.map((s) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => selectMedicine(s)}
+                      className="w-full text-left px-3 py-2 hover:bg-accent text-xs border-b border-border last:border-0"
+                    >
+                      <span className="font-medium">{s.type}. {s.name}</span>
+                      {s.composition && (
+                        <span className="block text-muted-foreground text-[10px]">{s.composition}</span>
+                      )}
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-3 py-2 text-xs text-muted-foreground">No matching medicine</div>
+                )}
+              </div>,
+              document.body
             )}
             <Input
               value={medicine.composition}
