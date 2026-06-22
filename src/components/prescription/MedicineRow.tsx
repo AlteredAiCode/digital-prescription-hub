@@ -71,24 +71,14 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const searchMedicines = async (query: string) => {
-    if (query.length < 2) {
-      setSuggestions([]);
-      setShowSuggestions(false);
-      return;
+  const loadMedicines = async (query: string) => {
+    let q = supabase.from("medicines").select("*").order("name", { ascending: true }).limit(50);
+    if (query.trim().length > 0) {
+      q = q.ilike("name", `%${query}%`);
     }
-    const { data } = await supabase
-      .from("medicines")
-      .select("*")
-      .ilike("name", `%${query}%`)
-      .limit(8);
-    if (data && data.length > 0) {
-      setSuggestions(data);
-      setShowSuggestions(true);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
+    const { data } = await q;
+    setSuggestions(data ?? []);
+    setShowSuggestions(true);
   };
 
   const selectMedicine = (med: any) => {
@@ -105,12 +95,12 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
       <td className="p-2 text-center text-xs text-muted-foreground font-mono w-8">
         {index + 1}
       </td>
-      <td className="p-2 relative" ref={suggestionRef}>
+      <td className="p-2 relative align-top" ref={suggestionRef}>
         <div className="flex gap-1 items-center">
           <select
             value={medicine.type}
             onChange={(e) => onChange(medicine.id, "type", e.target.value)}
-            className="h-7 w-20 rounded border border-input bg-background px-1 text-xs focus:ring-1 focus:ring-ring"
+            className="h-8 w-20 rounded border border-input bg-background px-1 text-xs focus:ring-1 focus:ring-ring"
           >
             {MEDICINE_TYPES.map((t) => (
               <option key={t} value={t}>{t}</option>
@@ -120,11 +110,11 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
             value={medicine.name}
             onChange={(e) => {
               onChange(medicine.id, "name", e.target.value);
-              searchMedicines(e.target.value);
+              loadMedicines(e.target.value);
             }}
-            onFocus={() => medicine.name.length >= 2 && suggestions.length > 0 && setShowSuggestions(true)}
-            placeholder="Medicine name"
-            className="h-7 text-xs font-medium flex-1"
+            onFocus={() => loadMedicines(medicine.name)}
+            placeholder="Select or type medicine…"
+            className="h-8 text-xs font-medium flex-1"
           />
         </div>
         {showSuggestions && suggestions.length > 0 && (

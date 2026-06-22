@@ -1,0 +1,26 @@
+
+INSERT INTO public.medicines (name, type, composition) VALUES
+('Paracetamol 500mg', 'TAB', 'Paracetamol 500mg'),
+('Dolo 650', 'TAB', 'Paracetamol 650mg'),
+('Crocin Advance', 'TAB', 'Paracetamol 500mg'),
+('Azithromycin 500mg', 'TAB', 'Azithromycin 500mg'),
+('Amoxicillin 500mg', 'CAP', 'Amoxicillin 500mg'),
+('Augmentin 625', 'TAB', 'Amoxicillin + Clavulanic Acid'),
+('Pantoprazole 40mg', 'TAB', 'Pantoprazole 40mg'),
+('Pan 40', 'TAB', 'Pantoprazole 40mg'),
+('Omeprazole 20mg', 'CAP', 'Omeprazole 20mg'),
+('Metformin 500mg', 'TAB', 'Metformin HCl 500mg'),
+('Glimepiride 2mg', 'TAB', 'Glimepiride 2mg'),
+('Telmisartan 40mg', 'TAB', 'Telmisartan 40mg'),
+('Amlodipine 5mg', 'TAB', 'Amlodipine 5mg'),
+('Atorvastatin 10mg', 'TAB', 'Atorvastatin 10mg'),
+('Thyronorm 50mcg', 'TAB', 'Levothyroxine 50mcg'),
+('Cetirizine 10mg', 'TAB', 'Cetirizine 10mg'),
+('Montair LC', 'TAB', 'Montelukast + Levocetirizine'),
+('Cough Syrup', 'SYR', 'Dextromethorphan'),
+('Becosules', 'CAP', 'Vitamin B Complex'),
+('Vitamin D3 60K', 'CAP', 'Cholecalciferol 60000 IU'),
+('Ondansetron 4mg', 'TAB', 'Ondansetron 4mg'),
+('Diclofenac Gel', 'OINT', 'Diclofenac Diethylamine'),
+('Eye Drops - Refresh Tears', 'DROP', 'Carboxymethylcellulose')
+ON CONFLICT (name, type) DO NOTHING;
