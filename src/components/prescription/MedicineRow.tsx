@@ -78,7 +78,7 @@ const TIMING_PRESETS = {
 };
 
 const MedicineRow = ({ index, medicine, onChange, onRemove, language }: MedicineRowProps) => {
-  const [allMedicines, setAllMedicines] = useState<any[]>([]);
+  const [allMedicines, setAllMedicines] = useState<any[]>(DUMMY_MEDICINES);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showTimingPresets, setShowTimingPresets] = useState(false);
   const [suggestionRect, setSuggestionRect] = useState({ left: 0, top: 0, width: 0 });
@@ -204,7 +204,10 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
                     <button
                       key={s.id}
                       type="button"
-                      onMouseDown={(e) => e.preventDefault()}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
                       onClick={() => selectMedicine(s)}
                       className="w-full text-left px-3 py-2 hover:bg-accent text-xs border-b border-border last:border-0"
                     >
