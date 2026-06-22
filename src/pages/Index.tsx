@@ -26,9 +26,6 @@ const Index = () => {
   const [patientAge, setPatientAge] = useState("");
   const [patientGender, setPatientGender] = useState("");
   const [patientPhone, setPatientPhone] = useState("");
-  const [chiefComplaints, setChiefComplaints] = useState("");
-  const [examination, setExamination] = useState("");
-  const [allergies, setAllergies] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
   const [prescribedTests, setPrescribedTests] = useState("");
   const [nextAppointment, setNextAppointment] = useState("");
