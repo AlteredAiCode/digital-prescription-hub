@@ -19,9 +19,6 @@ interface PrescriptionData {
   patientAge: string;
   patientGender: string;
   patientPhone: string;
-  chiefComplaints: string;
-  examination: string;
-  allergies: string;
   diagnosis: string;
   prescribedTests: string;
   nextAppointment: string;
