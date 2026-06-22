@@ -163,9 +163,9 @@ const Index = () => {
             </div>
           </div>
           <div className="rounded-md border border-border overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="max-h-[198px] overflow-auto">
               <table className="w-full min-w-[760px] text-sm">
-                <thead>
+                <thead className="sticky top-0 z-10">
                 <tr className="bg-muted text-left">
                   <th className="p-2 text-xs font-semibold text-muted-foreground w-8">#</th>
                   <th className="p-2 text-xs font-semibold text-muted-foreground">Medicine</th>
@@ -179,10 +179,6 @@ const Index = () => {
                   <th className="w-8"></th>
                 </tr>
                 </thead>
-              </table>
-            </div>
-            <div className="max-h-[164px] overflow-y-auto overflow-x-auto">
-              <table className="w-full min-w-[760px] text-sm">
                 <tbody>
                 {medicines.map((med, i) => (
                   <MedicineRow
