@@ -23,8 +23,8 @@ interface PatientDetailsProps {
 const PatientDetails = (props: PatientDetailsProps) => {
   return (
     <div className="space-y-3 mb-4">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="col-span-2">
+      <div className="grid grid-cols-12 gap-3">
+        <div className="col-span-12 md:col-span-5">
           <Label className="text-xs text-muted-foreground">Patient Name</Label>
           <Input
             value={props.patientName}
@@ -33,7 +33,7 @@ const PatientDetails = (props: PatientDetailsProps) => {
             className="h-8 text-sm"
           />
         </div>
-        <div>
+        <div className="col-span-4 md:col-span-2">
           <Label className="text-xs text-muted-foreground">Age</Label>
           <Input
             value={props.patientAge}
@@ -43,7 +43,7 @@ const PatientDetails = (props: PatientDetailsProps) => {
             type="number"
           />
         </div>
-        <div>
+        <div className="col-span-8 md:col-span-2">
           <Label className="text-xs text-muted-foreground">Gender</Label>
           <select
             value={props.patientGender}
@@ -56,9 +56,7 @@ const PatientDetails = (props: PatientDetailsProps) => {
             <option value="Other">Other</option>
           </select>
         </div>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div>
+        <div className="col-span-12 md:col-span-3">
           <Label className="text-xs text-muted-foreground">Phone</Label>
           <Input
             value={props.patientPhone}
@@ -67,41 +65,14 @@ const PatientDetails = (props: PatientDetailsProps) => {
             className="h-8 text-sm"
           />
         </div>
-        <div>
-          <Label className="text-xs text-muted-foreground">BP</Label>
-          <Input
-            value={props.bp}
-            onChange={(e) => props.setBp(e.target.value)}
-            placeholder="140/90 mmHg"
-            className="h-8 text-sm"
-          />
-        </div>
-        <div>
-          <Label className="text-xs text-muted-foreground">Pulse</Label>
-          <Input
-            value={props.pulse}
-            onChange={(e) => props.setPulse(e.target.value)}
-            placeholder="88 bpm"
-            className="h-8 text-sm"
-          />
-        </div>
-        <div>
-          <Label className="text-xs text-muted-foreground">SPO2</Label>
-          <Input
-            value={props.spo2}
-            onChange={(e) => props.setSpo2(e.target.value)}
-            placeholder="98%"
-            className="h-8 text-sm"
-          />
-        </div>
       </div>
-      <div>
-        <Label className="text-xs text-muted-foreground">Diagnosis</Label>
+      <div className="grid grid-cols-12 gap-3 items-end">
+        <Label className="col-span-12 md:col-span-2 text-xs text-muted-foreground md:pb-2">Diagnosis</Label>
         <Input
           value={props.diagnosis}
           onChange={(e) => props.setDiagnosis(e.target.value)}
           placeholder="e.g. DIABETES MELLITUS TYPE 2, HYPOTHYROIDISM"
-          className="h-8 text-sm font-medium uppercase"
+          className="col-span-12 md:col-span-10 h-8 text-sm font-medium uppercase"
         />
       </div>
     </div>
