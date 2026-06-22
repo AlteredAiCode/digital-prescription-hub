@@ -96,10 +96,13 @@ export type Database = {
       }
       prescriptions: {
         Row: {
+          allergies: string | null
           bp: string | null
+          chief_complaints: string | null
           created_at: string
           date_time: string
           diagnosis: string | null
+          examination: string | null
           id: string
           next_appointment: string | null
           patient_age: number | null
@@ -112,10 +115,13 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          allergies?: string | null
           bp?: string | null
+          chief_complaints?: string | null
           created_at?: string
           date_time?: string
           diagnosis?: string | null
+          examination?: string | null
           id?: string
           next_appointment?: string | null
           patient_age?: number | null
@@ -128,10 +134,13 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          allergies?: string | null
           bp?: string | null
+          chief_complaints?: string | null
           created_at?: string
           date_time?: string
           diagnosis?: string | null
+          examination?: string | null
           id?: string
           next_appointment?: string | null
           patient_age?: number | null

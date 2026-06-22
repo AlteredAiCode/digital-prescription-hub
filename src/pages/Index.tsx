@@ -26,9 +26,9 @@ const Index = () => {
   const [patientAge, setPatientAge] = useState("");
   const [patientGender, setPatientGender] = useState("");
   const [patientPhone, setPatientPhone] = useState("");
-  const [bp, setBp] = useState("");
-  const [pulse, setPulse] = useState("");
-  const [spo2, setSpo2] = useState("");
+  const [chiefComplaints, setChiefComplaints] = useState("");
+  const [examination, setExamination] = useState("");
+  const [allergies, setAllergies] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
   const [prescribedTests, setPrescribedTests] = useState("");
   const [nextAppointment, setNextAppointment] = useState("");
@@ -70,9 +70,9 @@ const Index = () => {
           patient_age: patientAge ? parseInt(patientAge) : null,
           patient_gender: patientGender || null,
           patient_phone: patientPhone || null,
-          bp: bp || null,
-          pulse: pulse || null,
-          spo2: spo2 || null,
+          chief_complaints: chiefComplaints || null,
+          examination: examination || null,
+          allergies: allergies || null,
           diagnosis: diagnosis || null,
           prescribed_tests: prescribedTests || null,
           next_appointment: nextAppointment || null,
@@ -128,9 +128,9 @@ const Index = () => {
       setPatientAge("");
       setPatientGender("");
       setPatientPhone("");
-      setBp("");
-      setPulse("");
-      setSpo2("");
+      setChiefComplaints("");
+      setExamination("");
+      setAllergies("");
       setDiagnosis("");
       setPrescribedTests("");
       setNextAppointment("");
@@ -153,9 +153,9 @@ const Index = () => {
             patientAge={patientAge} setPatientAge={setPatientAge}
             patientGender={patientGender} setPatientGender={setPatientGender}
             patientPhone={patientPhone} setPatientPhone={setPatientPhone}
-            bp={bp} setBp={setBp}
-            pulse={pulse} setPulse={setPulse}
-            spo2={spo2} setSpo2={setSpo2}
+            chiefComplaints={chiefComplaints} setChiefComplaints={setChiefComplaints}
+            examination={examination} setExamination={setExamination}
+            allergies={allergies} setAllergies={setAllergies}
             diagnosis={diagnosis} setDiagnosis={setDiagnosis}
           />
 
@@ -242,9 +242,9 @@ const Index = () => {
                 patientAge,
                 patientGender,
                 patientPhone,
-                bp,
-                pulse,
-                spo2,
+                chiefComplaints,
+                examination,
+                allergies,
                 diagnosis,
                 prescribedTests,
                 nextAppointment,
