@@ -52,18 +52,30 @@ const TIMING_PRESETS = {
 };
 
 const MedicineRow = ({ index, medicine, onChange, onRemove, language }: MedicineRowProps) => {
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [allMedicines, setAllMedicines] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showTimingPresets, setShowTimingPresets] = useState(false);
-  const suggestionRef = useRef<HTMLTableCellElement>(null);
-  const timingRef = useRef<HTMLTableCellElement>(null);
+  const nameWrapRef = useRef<HTMLDivElement>(null);
+  const timingWrapRef = useRef<HTMLDivElement>(null);
+
+  // Preload all medicines once so typing filters locally — no flicker, no layout shift.
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("medicines")
+        .select("*")
+        .order("name", { ascending: true })
+        .limit(200);
+      setAllMedicines(data ?? []);
+    })();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (suggestionRef.current && !suggestionRef.current.contains(e.target as Node)) {
+      if (nameWrapRef.current && !nameWrapRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
       }
-      if (timingRef.current && !timingRef.current.contains(e.target as Node)) {
+      if (timingWrapRef.current && !timingWrapRef.current.contains(e.target as Node)) {
         setShowTimingPresets(false);
       }
     };
@@ -71,15 +83,10 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const loadMedicines = async (query: string) => {
-    let q = supabase.from("medicines").select("*").order("name", { ascending: true }).limit(50);
-    if (query.trim().length > 0) {
-      q = q.ilike("name", `%${query}%`);
-    }
-    const { data } = await q;
-    setSuggestions(data ?? []);
-    setShowSuggestions(true);
-  };
+  const query = medicine.name.trim().toLowerCase();
+  const filtered = query.length === 0
+    ? allMedicines
+    : allMedicines.filter((m) => m.name.toLowerCase().includes(query));
 
   const selectMedicine = (med: any) => {
     onChange(medicine.id, "name", med.name);
@@ -91,12 +98,12 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
   const presets = TIMING_PRESETS[language];
 
   return (
-    <tr className="border-b border-border hover:bg-accent/30 transition-colors group">
-      <td className="p-2 text-center text-xs text-muted-foreground font-mono w-8">
+    <tr className="border-b border-border hover:bg-accent/30 transition-colors group align-top">
+      <td className="p-2 text-center text-xs text-muted-foreground font-mono w-8 align-top">
         {index + 1}
       </td>
-      <td className="p-2 relative align-top" ref={suggestionRef}>
-        <div className="flex gap-1 items-center">
+      <td className="p-2 align-top">
+        <div className="flex gap-1 items-start">
           <select
             value={medicine.type}
             onChange={(e) => onChange(medicine.id, "type", e.target.value)}
@@ -106,59 +113,63 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
               <option key={t} value={t}>{t}</option>
             ))}
           </select>
-          <div className="relative flex-1">
+          <div className="relative flex-1" ref={nameWrapRef}>
             <Input
               value={medicine.name}
               onChange={(e) => {
                 onChange(medicine.id, "name", e.target.value);
-                loadMedicines(e.target.value);
+                setShowSuggestions(true);
               }}
-              onFocus={() => loadMedicines(medicine.name)}
+              onFocus={() => setShowSuggestions(true)}
               placeholder="Select or type medicine…"
               className="h-8 text-xs font-medium pr-7 w-full"
+              autoComplete="off"
             />
             <button
               type="button"
-              onClick={() => loadMedicines(medicine.name)}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setShowSuggestions((s) => !s);
+              }}
               className="absolute right-1 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
               tabIndex={-1}
             >
               <ChevronDown className="h-3.5 w-3.5" />
             </button>
+            {showSuggestions && filtered.length > 0 && (
+              <div className="absolute z-50 top-full left-0 right-0 bg-popover border border-border rounded-md shadow-lg mt-1 max-h-56 overflow-auto">
+                {filtered.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => selectMedicine(s)}
+                    className="w-full text-left px-3 py-2 hover:bg-accent text-xs border-b border-border last:border-0"
+                  >
+                    <span className="font-medium">{s.type}. {s.name}</span>
+                    {s.composition && (
+                      <span className="block text-muted-foreground text-[10px]">{s.composition}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+            <Input
+              value={medicine.composition}
+              onChange={(e) => onChange(medicine.id, "composition", e.target.value)}
+              placeholder="Composition"
+              className="h-6 text-[10px] text-muted-foreground mt-1 border-dashed"
+            />
           </div>
         </div>
-        {showSuggestions && suggestions.length > 0 && (
-          <div className="absolute z-50 top-full left-0 w-full bg-card border border-border rounded-md shadow-lg mt-1 max-h-48 overflow-auto">
-            {suggestions.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => selectMedicine(s)}
-                className="w-full text-left px-3 py-2 hover:bg-accent text-xs border-b border-border last:border-0"
-              >
-                <span className="font-medium">{s.type}. {s.name}</span>
-                {s.composition && (
-                  <span className="block text-muted-foreground text-[10px]">{s.composition}</span>
-                )}
-              </button>
-            ))}
-          </div>
-        )}
-        <Input
-          value={medicine.composition}
-          onChange={(e) => onChange(medicine.id, "composition", e.target.value)}
-          placeholder="Composition"
-          className="h-6 text-[10px] text-muted-foreground mt-1 border-dashed"
-        />
       </td>
-      <td className="p-2">
-        <div className="flex gap-0.5 items-center justify-center">
+      <td className="p-2 align-top">
+        <div className="flex gap-0.5 items-center justify-center pt-1">
           <Input
             type="number"
             min={0}
             value={medicine.dosageMorning}
             onChange={(e) => onChange(medicine.id, "dosageMorning", parseInt(e.target.value) || 0)}
-            className="h-7 w-10 text-xs text-center p-0"
+            className="h-8 w-10 text-xs text-center p-0"
           />
           <span className="text-muted-foreground text-xs">-</span>
           <Input
@@ -166,7 +177,7 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
             min={0}
             value={medicine.dosageAfternoon}
             onChange={(e) => onChange(medicine.id, "dosageAfternoon", parseInt(e.target.value) || 0)}
-            className="h-7 w-10 text-xs text-center p-0"
+            className="h-8 w-10 text-xs text-center p-0"
           />
           <span className="text-muted-foreground text-xs">-</span>
           <Input
@@ -174,52 +185,55 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
             min={0}
             value={medicine.dosageNight}
             onChange={(e) => onChange(medicine.id, "dosageNight", parseInt(e.target.value) || 0)}
-            className="h-7 w-10 text-xs text-center p-0"
+            className="h-8 w-10 text-xs text-center p-0"
           />
         </div>
       </td>
-      <td className="p-2 relative" ref={timingRef}>
-        <Input
-          value={medicine.timingFreqDuration}
-          onChange={(e) => onChange(medicine.id, "timingFreqDuration", e.target.value)}
-          onFocus={() => setShowTimingPresets(true)}
-          placeholder={language === "hi" ? "खाने से पहले - रोज़ - 60 दिन" : "Before food - Daily - 60 days"}
-          className="h-7 text-xs"
-        />
-        {showTimingPresets && (
-          <div className="absolute z-50 top-full left-0 w-full bg-card border border-border rounded-md shadow-lg mt-1 max-h-48 overflow-auto">
-            {presets.map((preset) => (
-              <button
-                key={preset}
-                type="button"
-                onClick={() => {
-                  onChange(medicine.id, "timingFreqDuration", preset);
-                  setShowTimingPresets(false);
-                }}
-                className="w-full text-left px-3 py-2 hover:bg-accent text-xs border-b border-border last:border-0"
-              >
-                {preset}
-              </button>
-            ))}
-          </div>
-        )}
+      <td className="p-2 align-top">
+        <div className="relative" ref={timingWrapRef}>
+          <Input
+            value={medicine.timingFreqDuration}
+            onChange={(e) => onChange(medicine.id, "timingFreqDuration", e.target.value)}
+            onFocus={() => setShowTimingPresets(true)}
+            placeholder={language === "hi" ? "खाने से पहले - रोज़ - 60 दिन" : "Before food - Daily - 60 days"}
+            className="h-8 text-xs"
+            autoComplete="off"
+          />
+          {showTimingPresets && (
+            <div className="absolute z-50 top-full left-0 right-0 bg-popover border border-border rounded-md shadow-lg mt-1 max-h-56 overflow-auto">
+              {presets.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => {
+                    onChange(medicine.id, "timingFreqDuration", preset);
+                    setShowTimingPresets(false);
+                  }}
+                  className="w-full text-left px-3 py-2 hover:bg-accent text-xs border-b border-border last:border-0"
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </td>
-      <td className="p-2">
+      <td className="p-2 align-top">
         <Input
           type="number"
           min={0}
           value={medicine.quantity}
           onChange={(e) => onChange(medicine.id, "quantity", parseInt(e.target.value) || 0)}
-          className="h-7 w-16 text-xs text-center"
+          className="h-8 w-16 text-xs text-center"
         />
       </td>
-      <td className="p-2 w-8">
+      <td className="p-2 w-8 align-top">
         <Button
           type="button"
           variant="ghost"
           size="icon"
           onClick={() => onRemove(medicine.id)}
-          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+          className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
         >
           <X className="h-3 w-3" />
         </Button>
