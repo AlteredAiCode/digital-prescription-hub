@@ -106,16 +106,26 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
               <option key={t} value={t}>{t}</option>
             ))}
           </select>
-          <Input
-            value={medicine.name}
-            onChange={(e) => {
-              onChange(medicine.id, "name", e.target.value);
-              loadMedicines(e.target.value);
-            }}
-            onFocus={() => loadMedicines(medicine.name)}
-            placeholder="Select or type medicine…"
-            className="h-8 text-xs font-medium flex-1"
-          />
+          <div className="relative flex-1">
+            <Input
+              value={medicine.name}
+              onChange={(e) => {
+                onChange(medicine.id, "name", e.target.value);
+                loadMedicines(e.target.value);
+              }}
+              onFocus={() => loadMedicines(medicine.name)}
+              placeholder="Select or type medicine…"
+              className="h-8 text-xs font-medium pr-7 w-full"
+            />
+            <button
+              type="button"
+              onClick={() => loadMedicines(medicine.name)}
+              className="absolute right-1 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+              tabIndex={-1}
+            >
+              <ChevronDown className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
         {showSuggestions && suggestions.length > 0 && (
           <div className="absolute z-50 top-full left-0 w-full bg-card border border-border rounded-md shadow-lg mt-1 max-h-48 overflow-auto">
