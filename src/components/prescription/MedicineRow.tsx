@@ -82,8 +82,10 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showTimingPresets, setShowTimingPresets] = useState(false);
   const [suggestionRect, setSuggestionRect] = useState({ left: 0, top: 0, width: 0 });
+  const [timingRect, setTimingRect] = useState({ left: 0, top: 0, width: 0 });
   const nameWrapRef = useRef<HTMLDivElement>(null);
   const timingWrapRef = useRef<HTMLDivElement>(null);
+  const timingInputRef = useRef<HTMLInputElement>(null);
 
   // Preload all medicines once so typing filters locally — no flicker, no layout shift.
   useEffect(() => {
