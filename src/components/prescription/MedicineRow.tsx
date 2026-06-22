@@ -135,11 +135,7 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
   const query = medicine.name.trim().toLowerCase();
   const filtered = (query.length === 0
     ? allMedicines
-    : allMedicines.filter((m) =>
-        [m.name, m.type, m.composition]
-          .filter(Boolean)
-          .some((value) => String(value).toLowerCase().includes(query))
-      )
+    : allMedicines.filter((m) => String(m.name || "").toLowerCase().includes(query))
   ).slice(0, 25);
 
   const selectMedicine = (med: any) => {

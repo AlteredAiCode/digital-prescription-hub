@@ -162,9 +162,10 @@ const Index = () => {
               </select>
             </div>
           </div>
-          <div className="overflow-x-auto rounded-md border border-border">
-            <table className="w-full text-sm">
-              <thead>
+          <div className="rounded-md border border-border overflow-hidden">
+            <div className="max-h-[198px] overflow-auto">
+              <table className="w-full min-w-[760px] text-sm">
+                <thead className="sticky top-0 z-10">
                 <tr className="bg-muted text-left">
                   <th className="p-2 text-xs font-semibold text-muted-foreground w-8">#</th>
                   <th className="p-2 text-xs font-semibold text-muted-foreground">Medicine</th>
@@ -177,8 +178,8 @@ const Index = () => {
                   <th className="p-2 text-xs font-semibold text-muted-foreground w-20 text-center">Qty</th>
                   <th className="w-8"></th>
                 </tr>
-              </thead>
-              <tbody>
+                </thead>
+                <tbody>
                 {medicines.map((med, i) => (
                   <MedicineRow
                     key={med.id}
@@ -189,8 +190,9 @@ const Index = () => {
                     language={language}
                   />
                 ))}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <Button
