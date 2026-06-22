@@ -143,9 +143,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-card rounded-lg shadow-lg border border-border p-6 md:p-8">
+    <div className="min-h-screen bg-muted/30 p-2 md:p-4">
+      <div className="max-w-5xl mx-auto">
+        <div className="bg-card rounded-lg shadow-sm border border-border p-4 md:p-6">
           <PrescriptionHeader />
 
           <PatientDetails

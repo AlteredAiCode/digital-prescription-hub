@@ -71,24 +71,14 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const searchMedicines = async (query: string) => {
-    if (query.length < 2) {
-      setSuggestions([]);
-      setShowSuggestions(false);
-      return;
+  const loadMedicines = async (query: string) => {
+    let q = supabase.from("medicines").select("*").order("name", { ascending: true }).limit(50);
+    if (query.trim().length > 0) {
+      q = q.ilike("name", `%${query}%`);
     }
-    const { data } = await supabase
-      .from("medicines")
-      .select("*")
-      .ilike("name", `%${query}%`)
-      .limit(8);
-    if (data && data.length > 0) {
-      setSuggestions(data);
-      setShowSuggestions(true);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
+    const { data } = await q;
+    setSuggestions(data ?? []);
+    setShowSuggestions(true);
   };
 
   const selectMedicine = (med: any) => {
