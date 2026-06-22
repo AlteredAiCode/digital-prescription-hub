@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X, ChevronDown } from "lucide-react";
@@ -25,6 +26,31 @@ interface MedicineRowProps {
 }
 
 const MEDICINE_TYPES = ["TAB", "CAP", "SYR", "INJ", "OINT", "DROP", "OTHER"];
+
+const DUMMY_MEDICINES = [
+  { id: "dummy-1", name: "Amlodipine", type: "TAB", composition: "Amlodipine 5mg" },
+  { id: "dummy-2", name: "Amaryl", type: "TAB", composition: "Glimepiride 1mg" },
+  { id: "dummy-3", name: "Amoxicillin", type: "CAP", composition: "Amoxicillin 500mg" },
+  { id: "dummy-4", name: "Amitriptyline", type: "TAB", composition: "Amitriptyline 10mg" },
+  { id: "dummy-5", name: "Metformin", type: "TAB", composition: "Metformin 500mg" },
+  { id: "dummy-6", name: "Glimepiride", type: "TAB", composition: "Glimepiride 2mg" },
+  { id: "dummy-7", name: "Thyroxine", type: "TAB", composition: "Levothyroxine 50mcg" },
+  { id: "dummy-8", name: "Telmisartan", type: "TAB", composition: "Telmisartan 40mg" },
+  { id: "dummy-9", name: "Atorvastatin", type: "TAB", composition: "Atorvastatin 10mg" },
+  { id: "dummy-10", name: "Pantoprazole", type: "TAB", composition: "Pantoprazole 40mg" },
+  { id: "dummy-11", name: "Vitamin D3", type: "CAP", composition: "Cholecalciferol 60000 IU" },
+  { id: "dummy-12", name: "Calcium", type: "TAB", composition: "Calcium + Vitamin D3" },
+];
+
+const mergeMedicines = (dbMedicines: any[]) => {
+  const seen = new Set<string>();
+  return [...DUMMY_MEDICINES, ...dbMedicines].filter((med) => {
+    const key = `${med.type}-${med.name}`.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+};
 
 const TIMING_PRESETS = {
   en: [
@@ -55,20 +81,43 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
   const [allMedicines, setAllMedicines] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showTimingPresets, setShowTimingPresets] = useState(false);
+  const [suggestionRect, setSuggestionRect] = useState({ left: 0, top: 0, width: 0 });
   const nameWrapRef = useRef<HTMLDivElement>(null);
   const timingWrapRef = useRef<HTMLDivElement>(null);
 
   // Preload all medicines once so typing filters locally — no flicker, no layout shift.
   useEffect(() => {
     (async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("medicines")
         .select("*")
         .order("name", { ascending: true })
         .limit(200);
-      setAllMedicines(data ?? []);
+      setAllMedicines(error ? DUMMY_MEDICINES : mergeMedicines(data ?? []));
     })();
   }, []);
+
+  const updateSuggestionPosition = () => {
+    const rect = nameWrapRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setSuggestionRect({ left: rect.left, top: rect.bottom + 4, width: rect.width });
+  };
+
+  const openSuggestions = () => {
+    updateSuggestionPosition();
+    setShowSuggestions(true);
+  };
+
+  useEffect(() => {
+    if (!showSuggestions) return;
+    updateSuggestionPosition();
+    window.addEventListener("resize", updateSuggestionPosition);
+    window.addEventListener("scroll", updateSuggestionPosition, true);
+    return () => {
+      window.removeEventListener("resize", updateSuggestionPosition);
+      window.removeEventListener("scroll", updateSuggestionPosition, true);
+    };
+  }, [showSuggestions, medicine.name]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -84,9 +133,14 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
   }, []);
 
   const query = medicine.name.trim().toLowerCase();
-  const filtered = query.length === 0
+  const filtered = (query.length === 0
     ? allMedicines
-    : allMedicines.filter((m) => m.name.toLowerCase().includes(query));
+    : allMedicines.filter((m) =>
+        [m.name, m.type, m.composition]
+          .filter(Boolean)
+          .some((value) => String(value).toLowerCase().includes(query))
+      )
+  ).slice(0, 25);
 
   const selectMedicine = (med: any) => {
     onChange(medicine.id, "name", med.name);
