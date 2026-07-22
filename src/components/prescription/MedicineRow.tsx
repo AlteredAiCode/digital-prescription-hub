@@ -244,7 +244,8 @@ const MedicineRow = ({ index, medicine, onChange, onRemove }: MedicineRowProps) 
             type="number"
             min={0}
             value={medicine.dosageMorning}
-            onChange={(e) => onChange(medicine.id, "dosageMorning", parseInt(e.target.value) || 0)}
+            onFocus={(e) => e.target.select()}
+            onChange={(e) => onChange(medicine.id, "dosageMorning", e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
             className="h-8 w-10 text-xs text-center p-0"
           />
           <span className="text-muted-foreground text-xs">-</span>
@@ -252,7 +253,8 @@ const MedicineRow = ({ index, medicine, onChange, onRemove }: MedicineRowProps) 
             type="number"
             min={0}
             value={medicine.dosageAfternoon}
-            onChange={(e) => onChange(medicine.id, "dosageAfternoon", parseInt(e.target.value) || 0)}
+            onFocus={(e) => e.target.select()}
+            onChange={(e) => onChange(medicine.id, "dosageAfternoon", e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
             className="h-8 w-10 text-xs text-center p-0"
           />
           <span className="text-muted-foreground text-xs">-</span>
@@ -260,7 +262,8 @@ const MedicineRow = ({ index, medicine, onChange, onRemove }: MedicineRowProps) 
             type="number"
             min={0}
             value={medicine.dosageNight}
-            onChange={(e) => onChange(medicine.id, "dosageNight", parseInt(e.target.value) || 0)}
+            onFocus={(e) => e.target.select()}
+            onChange={(e) => onChange(medicine.id, "dosageNight", e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
             className="h-8 w-10 text-xs text-center p-0"
           />
         </div>
