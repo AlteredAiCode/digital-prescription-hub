@@ -25,7 +25,7 @@ const PrescriptionFooter = (props: PrescriptionFooterProps) => {
       </div>
       <div className="flex items-center gap-3">
         <Label className="text-xs text-muted-foreground font-semibold whitespace-nowrap">
-          अगली तारीख़ (Next Appointment)
+          Next Appointment
         </Label>
         <Input
           type="date"
