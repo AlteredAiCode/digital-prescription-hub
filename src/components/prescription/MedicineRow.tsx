@@ -22,7 +22,6 @@ interface MedicineRowProps {
   medicine: MedicineEntry;
   onChange: (id: string, field: keyof MedicineEntry, value: string | number) => void;
   onRemove: (id: string) => void;
-  language: "en" | "hi";
 }
 
 const MEDICINE_TYPES = ["TAB", "CAP", "SYR", "INJ", "OINT", "DROP", "OTHER"];
@@ -52,32 +51,19 @@ const mergeMedicines = (dbMedicines: any[]) => {
   });
 };
 
-const TIMING_PRESETS = {
-  en: [
-    "Before food - Daily - 30 days",
-    "After food - Daily - 30 days",
-    "Before food - Daily - 60 days",
-    "After food - Daily - 60 days",
-    "Before food - Twice daily - 30 days",
-    "After food - Twice daily - 30 days",
-    "Empty stomach - Daily - 30 days",
-    "At bedtime - Daily - 30 days",
-    "SOS (as needed)",
-  ],
-  hi: [
-    "खाने से पहले - रोज़ - 30 दिन",
-    "खाने के बाद - रोज़ - 30 दिन",
-    "खाने से पहले - रोज़ - 60 दिन",
-    "खाने के बाद - रोज़ - 60 दिन",
-    "खाने से पहले - दिन में दो बार - 30 दिन",
-    "खाने के बाद - दिन में दो बार - 30 दिन",
-    "खाली पेट - रोज़ - 30 दिन",
-    "सोने से पहले - रोज़ - 30 दिन",
-    "ज़रूरत पड़ने पर (SOS)",
-  ],
-};
+const TIMING_PRESETS = [
+  "Before food - Daily - 30 days",
+  "After food - Daily - 30 days",
+  "Before food - Daily - 60 days",
+  "After food - Daily - 60 days",
+  "Before food - Twice daily - 30 days",
+  "After food - Twice daily - 30 days",
+  "Empty stomach - Daily - 30 days",
+  "At bedtime - Daily - 30 days",
+  "SOS (as needed)",
+];
 
-const MedicineRow = ({ index, medicine, onChange, onRemove, language }: MedicineRowProps) => {
+const MedicineRow = ({ index, medicine, onChange, onRemove }: MedicineRowProps) => {
   const [allMedicines, setAllMedicines] = useState<any[]>(DUMMY_MEDICINES);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showTimingPresets, setShowTimingPresets] = useState(false);
@@ -169,7 +155,7 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
     setShowSuggestions(false);
   };
 
-  const presets = TIMING_PRESETS[language];
+  const presets = TIMING_PRESETS;
 
   return (
     <tr className="border-b border-border hover:bg-accent/30 transition-colors group align-top">
@@ -292,7 +278,7 @@ const MedicineRow = ({ index, medicine, onChange, onRemove, language }: Medicine
             onKeyDown={(e) => {
               if (e.key === "Tab" || e.key === "Escape") setShowTimingPresets(false);
             }}
-            placeholder={language === "hi" ? "खाने से पहले - रोज़ - 60 दिन" : "Before food - Daily - 60 days"}
+            placeholder="Before food - Daily - 60 days"
             className="h-8 text-xs"
             autoComplete="off"
           />
