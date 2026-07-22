@@ -14,7 +14,7 @@ const PrescriptionFooter = (props: PrescriptionFooterProps) => {
     <div className="space-y-3 mt-4 pt-4 border-t border-border">
       <div className="w-full">
         <Label className="text-xs text-muted-foreground font-semibold">
-          निर्धारित परीक्षण (Prescribed Tests)
+          Prescribed Tests
         </Label>
         <Textarea
           value={props.prescribedTests}
