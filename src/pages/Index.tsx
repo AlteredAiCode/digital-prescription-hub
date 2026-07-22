@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Save, FileText } from "lucide-react";
+import { Plus, MessageCircle, FileText } from "lucide-react";
 import SharePrescriptionDialog from "@/components/prescription/SharePrescriptionDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -8,6 +8,7 @@ import PrescriptionHeader from "@/components/prescription/PrescriptionHeader";
 import PatientDetails from "@/components/prescription/PatientDetails";
 import MedicineRow, { MedicineEntry } from "@/components/prescription/MedicineRow";
 import PrescriptionFooter from "@/components/prescription/PrescriptionFooter";
+import { generatePrescriptionPdf } from "@/lib/generatePdf";
 
 const createEmptyMedicine = (): MedicineEntry => ({
   id: crypto.randomUUID(),
@@ -47,9 +48,13 @@ const Index = () => {
     []
   );
 
-  const savePrescription = async () => {
+  const sendPrescriptionViaWhatsApp = async () => {
     if (!patientName.trim()) {
       toast.error("Patient name is required");
+      return;
+    }
+    if (!patientPhone.trim()) {
+      toast.error("Patient phone is required to share via WhatsApp");
       return;
     }
     if (medicines.every((m) => !m.name.trim())) {
@@ -66,7 +71,7 @@ const Index = () => {
           patient_name: patientName,
           patient_age: patientAge ? parseInt(patientAge) : null,
           patient_gender: patientGender || null,
-          patient_phone: patientPhone || null,
+          patient_phone: patientPhone,
           diagnosis: diagnosis || null,
           prescribed_tests: prescribedTests || null,
           next_appointment: nextAppointment || null,
@@ -116,7 +121,44 @@ const Index = () => {
 
       if (medError) throw medError;
 
-      toast.success("Prescription saved successfully!");
+      // Generate PDF and download for attachment
+      const pdf = await generatePrescriptionPdf({
+        patientName,
+        patientAge,
+        patientGender,
+        patientPhone,
+        diagnosis,
+        prescribedTests,
+        nextAppointment,
+        medicines,
+      });
+      const blob = pdf.output("blob");
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Prescription_${patientName || "Patient"}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      // Build prescription summary text
+      const medsText = validMedicines
+        .map(
+          (m, i) =>
+            `${i + 1}. ${m.type} ${m.name} (${m.dosageMorning}-${m.dosageAfternoon}-${m.dosageNight}) ${m.timingFreqDuration} Qty:${m.quantity}`
+        )
+        .join("\n");
+
+      const message = encodeURIComponent(
+        `*Prescription*\n\nPatient: ${patientName}\nAge: ${patientAge || "N/A"} | Gender: ${patientGender || "N/A"}\nDiagnosis: ${diagnosis || "N/A"}\n\n*Medicines:*\n${medsText}\n\n${prescribedTests ? `Tests: ${prescribedTests}\n` : ""}${nextAppointment ? `Next Appointment: ${nextAppointment}` : ""}\n\n_PDF downloaded separately. Please share it along with this message._`
+      );
+
+      const phone = patientPhone.replace(/\D/g, "");
+      window.open(
+        `https://wa.me/${phone.startsWith("91") ? phone : "91" + phone}?text=${message}`,
+        "_blank"
+      );
+
+      toast.success("Prescription saved! PDF downloaded and WhatsApp opened.");
       // Reset form
       setPatientName("");
       setPatientAge("");
@@ -127,7 +169,7 @@ const Index = () => {
       setNextAppointment("");
       setMedicines([createEmptyMedicine()]);
     } catch (err: any) {
-      toast.error(err.message || "Failed to save prescription");
+      toast.error(err.message || "Failed to send prescription");
     } finally {
       setSaving(false);
     }
@@ -199,15 +241,15 @@ const Index = () => {
             setNextAppointment={setNextAppointment}
           />
 
-          {/* Save Button */}
+          {/* Send Prescription via WhatsApp Button */}
           <div className="flex gap-3 mt-6 pt-4 border-t border-border">
             <Button
-              onClick={savePrescription}
+              onClick={sendPrescriptionViaWhatsApp}
               disabled={saving}
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              <Save className="h-4 w-4 mr-2" />
-              {saving ? "Saving..." : "Save Prescription"}
+              <MessageCircle className="h-4 w-4 mr-2" />
+              {saving ? "Sending..." : "Send Prescription via WhatsApp"}
             </Button>
             <Button variant="outline" onClick={() => window.print()}>
               <FileText className="h-4 w-4 mr-2" />
