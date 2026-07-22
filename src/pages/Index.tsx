@@ -241,15 +241,15 @@ const Index = () => {
             setNextAppointment={setNextAppointment}
           />
 
-          {/* Save Button */}
+          {/* Send Prescription via WhatsApp Button */}
           <div className="flex gap-3 mt-6 pt-4 border-t border-border">
             <Button
-              onClick={savePrescription}
+              onClick={sendPrescriptionViaWhatsApp}
               disabled={saving}
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              <Save className="h-4 w-4 mr-2" />
-              {saving ? "Saving..." : "Save Prescription"}
+              <MessageCircle className="h-4 w-4 mr-2" />
+              {saving ? "Sending..." : "Send Prescription via WhatsApp"}
             </Button>
             <Button variant="outline" onClick={() => window.print()}>
               <FileText className="h-4 w-4 mr-2" />
