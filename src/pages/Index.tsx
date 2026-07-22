@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Save, FileText } from "lucide-react";
+import { Plus, MessageCircle, FileText } from "lucide-react";
 import SharePrescriptionDialog from "@/components/prescription/SharePrescriptionDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -8,6 +8,7 @@ import PrescriptionHeader from "@/components/prescription/PrescriptionHeader";
 import PatientDetails from "@/components/prescription/PatientDetails";
 import MedicineRow, { MedicineEntry } from "@/components/prescription/MedicineRow";
 import PrescriptionFooter from "@/components/prescription/PrescriptionFooter";
+import { generatePrescriptionPdf } from "@/lib/generatePdf";
 
 const createEmptyMedicine = (): MedicineEntry => ({
   id: crypto.randomUUID(),
