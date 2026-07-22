@@ -327,7 +327,8 @@ const MedicineRow = ({ index, medicine, onChange, onRemove }: MedicineRowProps) 
           type="number"
           min={0}
           value={medicine.quantity}
-          onChange={(e) => onChange(medicine.id, "quantity", parseInt(e.target.value) || 0)}
+          onFocus={(e) => e.target.select()}
+          onChange={(e) => onChange(medicine.id, "quantity", e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
           className="h-8 w-16 text-xs text-center"
         />
       </td>
