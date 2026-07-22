@@ -48,9 +48,13 @@ const Index = () => {
     []
   );
 
-  const savePrescription = async () => {
+  const sendPrescriptionViaWhatsApp = async () => {
     if (!patientName.trim()) {
       toast.error("Patient name is required");
+      return;
+    }
+    if (!patientPhone.trim()) {
+      toast.error("Patient phone is required to share via WhatsApp");
       return;
     }
     if (medicines.every((m) => !m.name.trim())) {
@@ -67,7 +71,7 @@ const Index = () => {
           patient_name: patientName,
           patient_age: patientAge ? parseInt(patientAge) : null,
           patient_gender: patientGender || null,
-          patient_phone: patientPhone || null,
+          patient_phone: patientPhone,
           diagnosis: diagnosis || null,
           prescribed_tests: prescribedTests || null,
           next_appointment: nextAppointment || null,
@@ -117,7 +121,44 @@ const Index = () => {
 
       if (medError) throw medError;
 
-      toast.success("Prescription saved successfully!");
+      // Generate PDF and download for attachment
+      const pdf = await generatePrescriptionPdf({
+        patientName,
+        patientAge,
+        patientGender,
+        patientPhone,
+        diagnosis,
+        prescribedTests,
+        nextAppointment,
+        medicines,
+      });
+      const blob = pdf.output("blob");
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Prescription_${patientName || "Patient"}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      // Build prescription summary text
+      const medsText = validMedicines
+        .map(
+          (m, i) =>
+            `${i + 1}. ${m.type} ${m.name} (${m.dosageMorning}-${m.dosageAfternoon}-${m.dosageNight}) ${m.timingFreqDuration} Qty:${m.quantity}`
+        )
+        .join("\n");
+
+      const message = encodeURIComponent(
+        `*Prescription*\n\nPatient: ${patientName}\nAge: ${patientAge || "N/A"} | Gender: ${patientGender || "N/A"}\nDiagnosis: ${diagnosis || "N/A"}\n\n*Medicines:*\n${medsText}\n\n${prescribedTests ? `Tests: ${prescribedTests}\n` : ""}${nextAppointment ? `Next Appointment: ${nextAppointment}` : ""}\n\n_PDF downloaded separately. Please share it along with this message._`
+      );
+
+      const phone = patientPhone.replace(/\D/g, "");
+      window.open(
+        `https://wa.me/${phone.startsWith("91") ? phone : "91" + phone}?text=${message}`,
+        "_blank"
+      );
+
+      toast.success("Prescription saved! PDF downloaded and WhatsApp opened.");
       // Reset form
       setPatientName("");
       setPatientAge("");
@@ -128,7 +169,7 @@ const Index = () => {
       setNextAppointment("");
       setMedicines([createEmptyMedicine()]);
     } catch (err: any) {
-      toast.error(err.message || "Failed to save prescription");
+      toast.error(err.message || "Failed to send prescription");
     } finally {
       setSaving(false);
     }
